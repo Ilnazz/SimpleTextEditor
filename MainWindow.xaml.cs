@@ -29,17 +29,8 @@ namespace TextEditor
             var app = new Microsoft.Office.Interop.Word.Application();
             Microsoft.Office.Interop.Word.Document document = app.Documents.Open("C:\\Users\\Ильназ\\Desktop\\Test.docx");
             // Loop through all words in the document.
-            int count = document.Words.Count;
-            string text = "";
-            for (int i = 1; i <= count; i++)
-            {
-                // Write the word.
-                string s = document.Words[i].Text;
-                text += s;
-            }
-            // Close word.
+            TB.Text = document.Content.Text;
             app.Quit();
-            TB.Text = text;
         }
 
         private void TB_KeyDown(object sender, KeyEventArgs e)
