@@ -46,6 +46,7 @@ namespace TextEditor
         }
 
         private bool _isSaved = false;
+        private string _path = null;
 
         public MainWindow()
         {
@@ -60,29 +61,32 @@ namespace TextEditor
 
         private void OpenDocument()
         {
-            string path = CreateOpenFileDialogMenu();
-            if (path == null)
+            _path = CreateOpenFileDialogMenu();
+            if (_path == null)
                 return;
 
-            if (File.Exists(path) == false)
+            if (File.Exists(_path) == false)
                 throw new FileNotFoundException();
 
-            _activeDocument = _application.Documents.Open(path);
+            _activeDocument = _application.Documents.Open(_path);
             ReadDocument();
         }
 
         private void SaveDocument()
         {
-
+            if (_path == null)
+                SaveAsDocument();
+            else
+                ActiveDocument.Save();
         }
 
         private void SaveAsDocument()
         {
-            string path = CreateSaveFileDialogMenu();
-            if (path == null)
+            _path = CreateSaveFileDialogMenu();
+            if (_path == null)
                 return;
 
-            ActiveDocument.SaveAs2(path);
+            ActiveDocument.SaveAs2(_path);
         }
 
         private string CreateSaveFileDialogMenu()
