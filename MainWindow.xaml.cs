@@ -1,4 +1,5 @@
 ﻿using Microsoft.Office.Interop.Word;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,7 +23,16 @@ namespace TextEditor
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
-        private readonly Microsoft.Office.Interop.Word.Application _application = new Microsoft.Office.Interop.Word.Application();
+        private Dictionary<string, string[]> FileFilter = new Dictionary<string, string[]>()
+        {
+            { "Документы Word", new[] { "*.docx", "*.doc" } },
+            { "Текстовые файлы", new[] { "*.txt" } }
+        };
+
+        private string Filter => string.Join("|", FileFilter.Select(keyPair => $"{keyPair.Key} ({string.Join(", ", keyPair.Value)})|{string.Join(";", keyPair.Value)}"));
+        private string DefaultFilter => FileFilter.Select(keyPair => $"{keyPair.Key} ({string.Join(", ", keyPair.Value)})|{string.Join(";", keyPair.Value)}").First();
+
+        private readonly Microsoft.Office.Interop.Word.Application _application;
         private Document _activeDocument;
 
         public Document ActiveDocument
@@ -40,15 +50,65 @@ namespace TextEditor
         public MainWindow()
         {
             InitializeComponent();
+            _application = new Microsoft.Office.Interop.Word.Application();
         }
 
-        private void OpenDocument(string path)
+        private void CreateNewDocument()
         {
+
+        }
+
+        private void OpenDocument()
+        {
+            string path = CreateOpenFileDialogMenu();
+            if (path == null)
+                return;
+
             if (File.Exists(path) == false)
                 throw new FileNotFoundException();
 
             _activeDocument = _application.Documents.Open(path);
             ReadDocument();
+        }
+
+        private void SaveDocument()
+        {
+
+        }
+
+        private void SaveAsDocument()
+        {
+            string path = CreateSaveFileDialogMenu();
+            if (path == null)
+                return;
+
+            ActiveDocument.SaveAs2(path);
+        }
+
+        private string CreateSaveFileDialogMenu()
+        {
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                Filter = Filter,
+                DefaultExt = DefaultFilter,
+            };
+
+            if (dialog.ShowDialog() == true)
+                return dialog.FileName;
+            return null;
+        }
+
+        private string CreateOpenFileDialogMenu()
+        {
+            OpenFileDialog dialog = new OpenFileDialog()
+            {
+                Filter = Filter,
+                DefaultExt = DefaultFilter
+            };
+
+            if (dialog.ShowDialog() == true)
+                return dialog.FileName;
+            return null;
         }
 
         private void ReadDocument()
@@ -61,6 +121,9 @@ namespace TextEditor
 
         private void CloseDocument()
         {
+            if (ActiveDocument == null)
+                return;
+
             ActiveDocument.Close();
             ActiveDocument = null;
         }
