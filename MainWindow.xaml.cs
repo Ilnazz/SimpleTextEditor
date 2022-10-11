@@ -1,6 +1,7 @@
 ﻿using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,16 +22,53 @@ namespace TextEditor
     /// </summary>
     public partial class MainWindow : System.Windows.Window
     {
+        private readonly Microsoft.Office.Interop.Word.Application _application = new Microsoft.Office.Interop.Word.Application();
+        private Document _activeDocument;
+
+        public Document ActiveDocument
+        {
+            get => _activeDocument;
+            set
+            {
+                _activeDocument = value;
+                _isSaved = false;
+            }
+        }
+
+        private bool _isSaved = false;
 
         public MainWindow()
         {
             InitializeComponent();
+        }
 
-            var app = new Microsoft.Office.Interop.Word.Application();
-            Microsoft.Office.Interop.Word.Document document = app.Documents.Open("C:\\Users\\Ильназ\\Desktop\\Test.docx");
-            // Loop through all words in the document
-            TB.Text = document.Content.Text;
-            app.Quit();
+        private void OpenDocument(string path)
+        {
+            if (File.Exists(path) == false)
+                throw new FileNotFoundException();
+
+            _activeDocument = _application.Documents.Open(path);
+            ReadDocument();
+        }
+
+        private void ReadDocument()
+        {
+            if (ActiveDocument == null)
+                return;
+
+            TB.Text = ActiveDocument.Content.Text;
+        }
+
+        private void CloseDocument()
+        {
+            ActiveDocument.Close();
+            ActiveDocument = null;
+        }
+
+        private void QuitApplication()
+        {
+            CloseDocument();
+            _application.Quit();
         }
 
         private void TB_KeyDown(object sender, KeyEventArgs e)
@@ -39,6 +77,11 @@ namespace TextEditor
             var prevSelectionStart = TB.SelectionStart;
             TB.Text = TB.Text.Insert(TB.SelectionStart, "\n");
             TB.SelectionStart = prevSelectionStart + 1;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            QuitApplication();
         }
     }
 }

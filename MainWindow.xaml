@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TextEditor"
         mc:Ignorable="d"
-        Title="Редактор текста" Height="600" Width="1000" FontSize="14">
+        Title="Редактор текста" Height="600" Width="1000" FontSize="14"
+        Closing="Window_Closing">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
