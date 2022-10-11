@@ -32,7 +32,7 @@ namespace TextEditor
         private string Filter => string.Join("|", FileFilter.Select(keyPair => $"{keyPair.Key} ({string.Join(", ", keyPair.Value)})|{string.Join(";", keyPair.Value)}"));
         private string DefaultFilter => FileFilter.Select(keyPair => $"{keyPair.Key} ({string.Join(", ", keyPair.Value)})|{string.Join(";", keyPair.Value)}").First();
 
-        private MenuItem[] menuItems;
+        private readonly MenuItem[] menuItems;
 
         public const int DefaultScale = 14;
         private int _scale = DefaultScale;
@@ -79,8 +79,14 @@ namespace TextEditor
 
             _application = new Microsoft.Office.Interop.Word.Application();
             CreateNewDocument();
+
+            new FindWindow().Show();
         }
 
+        /// <summary>
+        /// Создаёт новый документ, если в текущем окне уже есть созданный документ, 
+        /// то пытается сохранить и замещает новым документом, иначе ничего не создаёт
+        /// </summary>
         private void CreateNewDocument()
         {
             if (ActiveDocument == null)
@@ -101,6 +107,9 @@ namespace TextEditor
             }
         }
 
+        /// <summary>
+        /// Добавляет новый документ в application
+        /// </summary>
         private void AddDocument()
         {
             object template = Type.Missing;
@@ -110,8 +119,21 @@ namespace TextEditor
             ActiveDocument = _application.Documents.Add(ref template, ref newTemplate, ref documentType, ref visible);
         }
 
+        /// <summary>
+        /// Открывает документ
+        /// </summary>
+        /// <exception cref="FileNotFoundException">Если пытаемся открыть не существующий файл</exception>
         private void OpenDocument()
         {
+            if (ActiveDocument != null)
+            {
+                SaveDocument();
+                if (_isSaved == false)
+                    return;
+
+                CloseDocument();
+            }
+
             _path = CreateOpenFileDialogMenu();
             if (_path == null)
                 return;
@@ -234,67 +256,18 @@ namespace TextEditor
                 e.Cancel = true;
         }
 
-        private void TB_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            
-            _isSaved = false;
-        }
-
-        private void CreateNewDocument_Click(object sender, RoutedEventArgs e)
-        {
-            CreateNewDocument();
-        }
-
-        private void NewWindow_Click(object sender, RoutedEventArgs e)
-        {
-            new MainWindow().Show();
-        }
-
-        private void OpenDocument_Click(object sender, RoutedEventArgs e)
-        {
-            OpenDocument();
-        }
-
-        private void SaveDocument_Click(object sender, RoutedEventArgs e)
-        {
-            SaveDocument();
-        }
-
-        private void SaveAsDocument_Click(object sender, RoutedEventArgs e)
-        {
-            SaveAsDocument();
-        }
-
-        private void Exit_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void Undo_Click(object sender, RoutedEventArgs e)
-        {
-            TB.Undo();
-        }
-
-        private void Cut_Click(object sender, RoutedEventArgs e)
-        {
-            TB.Cut();
-        }
-
-        private void Copy_Click(object sender, RoutedEventArgs e)
-        {
-            TB.Copy();
-        }
-
-        private void Paste_Click(object sender, RoutedEventArgs e)
-        {
-            TB.Paste();
-        }
-
-        private void Delete_Click(object sender, RoutedEventArgs e)
-        {
-            string text = TB.Text;
-            TB.Text = text.Remove(TB.SelectionStart, TB.SelectionLength);
-        }
+        private void TB_TextChanged(object sender, TextChangedEventArgs e) => _isSaved = false;
+        private void CreateNewDocument_Click(object sender, RoutedEventArgs e) => CreateNewDocument();
+        private void NewWindow_Click(object sender, RoutedEventArgs e) => new MainWindow().Show();
+        private void OpenDocument_Click(object sender, RoutedEventArgs e) => OpenDocument();
+        private void SaveDocument_Click(object sender, RoutedEventArgs e) => SaveDocument();
+        private void SaveAsDocument_Click(object sender, RoutedEventArgs e) => SaveAsDocument();
+        private void Exit_Click(object sender, RoutedEventArgs e) => Close();
+        private void Undo_Click(object sender, RoutedEventArgs e) => TB.Undo();
+        private void Cut_Click(object sender, RoutedEventArgs e) => TB.Cut();
+        private void Copy_Click(object sender, RoutedEventArgs e) => TB.Copy();
+        private void Paste_Click(object sender, RoutedEventArgs e) => TB.Paste();
+        private void Delete_Click(object sender, RoutedEventArgs e) => TB.Text = TB.Text.Remove(TB.SelectionStart, TB.SelectionLength);
 
         private void TB_SelectionChanged(object sender, RoutedEventArgs e)
         {
@@ -311,19 +284,8 @@ namespace TextEditor
                     menuItem.IsEnabled = enabled;
         }
 
-        private void ZoomIn_Click(object sender, RoutedEventArgs e)
-        {
-            Scale = (int)(Scale * 1.3);
-        }
-
-        private void ZoomOut_Click(object sender, RoutedEventArgs e)
-        {
-            Scale = (int)(Scale / 1.3);
-        }
-
-        private void DefaultZomm_Click(object sender, RoutedEventArgs e)
-        {
-            Scale = DefaultScale;
-        }
+        private void ZoomIn_Click(object sender, RoutedEventArgs e) => Scale = (int)(Scale * 1.3);
+        private void ZoomOut_Click(object sender, RoutedEventArgs e) => Scale = (int)(Scale / 1.3);
+        private void DefaultZomm_Click(object sender, RoutedEventArgs e) => Scale = DefaultScale;
     }
 }
