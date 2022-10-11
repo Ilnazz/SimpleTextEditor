@@ -16,24 +16,24 @@
 
         <Menu VerticalAlignment="Center" Grid.Row="0" Padding="0,5,0,5" BorderThickness="0,0,0,1" BorderBrush="#EFEFEF" Grid.ColumnSpan="4" FontSize="16" Background="Transparent" >
             <MenuItem Header="Файл">
-                <MenuItem Header="Создать" />
-                <MenuItem Header="Новое окно" />
-                <MenuItem Header="Открыть" />
-                <MenuItem Header="Сохранить" />
-                <MenuItem Header="Сохранить как" />
+                <MenuItem Header="Создать" Click="CreateNewDocument_Click"/>
+                <MenuItem Header="Новое окно" Click="NewWindow_Click"/>
+                <MenuItem Header="Открыть" Click="OpenDocument_Click"/>
+                <MenuItem Header="Сохранить" Click="SaveDocument_Click"/>
+                <MenuItem Header="Сохранить как" Click="SaveAsDocument_Click"/>
                 <Separator />
                 <MenuItem Header="Параметры страницы" />
                 <MenuItem Header="Печать" />
                 <Separator />
-                <MenuItem Header="Выйти" />
+                <MenuItem Header="Выйти" Click="Exit_Click"/>
             </MenuItem>
-            <MenuItem Header="Изменить" >
-                <MenuItem Header="Отменить" />
+            <MenuItem Name="TopMenu" Header="Изменить" >
+                <MenuItem Header="Отменить" Click="Undo_Click"/>
                 <Separator />
-                <MenuItem Header="Вырезать" />
-                <MenuItem Header="Копировать" />
-                <MenuItem Header="Вставить" />
-                <MenuItem Header="Удалить" />
+                <MenuItem Header="Вырезать" Click="Cut_Click" IsEnabled="False"/>
+                <MenuItem Header="Копировать" Click="Copy_Click" IsEnabled="False"/>
+                <MenuItem Header="Вставить" Click="Paste_Click"/>
+                <MenuItem Header="Удалить" Click="Delete_Click" IsEnabled="False"/>
                 <Separator />
                 <MenuItem Header="Найти..." />
                 <MenuItem Header="Найти далее" />
@@ -45,15 +45,17 @@
             </MenuItem>
             <MenuItem Header="Просмотр" >
                 <MenuItem Header="Масштаб">
-                    <MenuItem Header="Увеличить" />
-                    <MenuItem Header="Уменьшить" />
-                    <MenuItem Header="Восстановить масштаб по умолчанию" />
+                    <MenuItem Header="Увеличить" Click="ZoomIn_Click"/>
+                    <MenuItem Header="Уменьшить" Click="ZoomOut_Click"/>
+                    <MenuItem Header="Восстановить масштаб по умолчанию" Click="DefaultZomm_Click"/>
                 </MenuItem>
                 <MenuItem Header="Строка состояния" IsCheckable="True" IsChecked="True"/>
             </MenuItem>
         </Menu>
 
-        <TextBox x:Name="TB" Padding="5" BorderThickness="0" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" KeyDown="TB_KeyDown" Grid.Row="1" Grid.ColumnSpan="4" />
+        <TextBox x:Name="TB" Padding="5" BorderThickness="0" HorizontalScrollBarVisibility="Visible" 
+                 VerticalScrollBarVisibility="Visible" KeyDown="TB_KeyDown" Grid.Row="1" Grid.ColumnSpan="4" 
+                 TextChanged="TB_TextChanged" SelectionChanged="TB_SelectionChanged"/>
 
         <Grid Grid.Row="2" x:Name="StatusLine" Margin="5">
             <Grid.ColumnDefinitions>
