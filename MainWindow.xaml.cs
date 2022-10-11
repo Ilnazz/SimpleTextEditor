@@ -28,7 +28,7 @@ namespace TextEditor
 
             var app = new Microsoft.Office.Interop.Word.Application();
             Microsoft.Office.Interop.Word.Document document = app.Documents.Open("C:\\Users\\Ильназ\\Desktop\\Test.docx");
-            // Loop through all words in the document.
+            // Loop through all words in the document
             TB.Text = document.Content.Text;
             app.Quit();
         }
