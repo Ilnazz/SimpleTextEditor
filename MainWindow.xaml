@@ -5,14 +5,15 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TextEditor"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Редактор текста" Height="600" Width="1000" FontSize="14">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="10*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="12*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <Menu Height="25" VerticalAlignment="Top" Grid.Row="0">
+
+        <Menu VerticalAlignment="Center" Grid.Row="0" Padding="0,5,0,5" BorderThickness="0,0,0,1" BorderBrush="#EFEFEF" Grid.ColumnSpan="4" FontSize="16" Background="Transparent" >
             <MenuItem Header="Файл">
                 <MenuItem Header="Создать" />
                 <MenuItem Header="Новое окно" />
@@ -47,14 +48,28 @@
                     <MenuItem Header="Уменьшить" />
                     <MenuItem Header="Восстановить масштаб по умолчанию" />
                 </MenuItem>
-                <MenuItem Header="Строка состояния" />
+                <MenuItem Header="Строка состояния" IsCheckable="True" IsChecked="True"/>
             </MenuItem>
         </Menu>
-        <TextBox x:Name="TB" Grid.Row="1" KeyDown="TB_KeyDown">
-            
-        </TextBox>
-        <StackPanel Grid.Row="2">
-            
-        </StackPanel>
+
+        <TextBox x:Name="TB" Padding="5" BorderThickness="0" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" KeyDown="TB_KeyDown" Grid.Row="1" Grid.ColumnSpan="4" />
+
+        <Grid Grid.Row="2" x:Name="StatusLine" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" BorderBrush="#EFEFEF" BorderThickness="0,0,1,0" />
+            <Border Grid.Column="1" BorderBrush="#EFEFEF" BorderThickness="0,0,1,0" />
+            <Border Grid.Column="2" BorderBrush="#EFEFEF" BorderThickness="0,0,1,0" />
+
+            <TextBlock Name="TBRowAndColumn" Text="Строка 1, столбец 1" Grid.Column="0" VerticalAlignment="Center" />
+            <TextBlock Name="TBZoomValue" Text="100%" Margin="5,0,0,0" Grid.Column="1" VerticalAlignment="Center"/>
+            <TextBlock Name="TBLineBreakType" Text="Windows (CRLF)" Margin="5,0,0,0" Grid.Column="2" VerticalAlignment="Center" />
+            <TextBlock Name="Encoding" Text="UTF-8" Margin="5,0,0,0" Grid.Column="3" VerticalAlignment="Center" />
+        </Grid>
     </Grid>
 </Window>
