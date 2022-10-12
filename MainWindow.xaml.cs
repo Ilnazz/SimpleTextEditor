@@ -64,6 +64,8 @@ namespace TextEditor
         private bool _isSaved = false;
         private string _path = null;
 
+        private FindWindow _findWindow;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -78,9 +80,9 @@ namespace TextEditor
             }
 
             _application = new Microsoft.Office.Interop.Word.Application();
-            CreateNewDocument();
 
-            new FindWindow().Show();
+            _findWindow = new FindWindow();
+            _findWindow.Show();
         }
 
         /// <summary>
@@ -134,8 +136,7 @@ namespace TextEditor
                 CloseDocument();
             }
 
-            _path = CreateOpenFileDialogMenu();
-            if (_path == null)
+            if ((_path = CreateOpenFileDialogMenu()) == null)
                 return;
 
             if (File.Exists(_path) == false)
@@ -153,7 +154,6 @@ namespace TextEditor
             if (ActiveDocument == null)
                 return;
 
-
             if (_path == null)
             {
                 SaveAsDocument();
@@ -161,8 +161,15 @@ namespace TextEditor
             else
             {
                 ActiveDocument.Content.Text = TB.Text;
-                ActiveDocument.Save();
-                _isSaved = true;
+                try
+                {
+                    ActiveDocument.Save();
+                    _isSaved = true;
+                }
+                catch(Exception)
+                {
+                    return;
+                }
             }
         }
 
@@ -239,14 +246,6 @@ namespace TextEditor
             _application.Quit();
         }
 
-        private void TB_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key != Key.Enter) return;
-            var prevSelectionStart = TB.SelectionStart;
-            TB.Text = TB.Text.Insert(TB.SelectionStart, "\n");
-            TB.SelectionStart = prevSelectionStart + 1;
-        }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             CloseDocument();
@@ -254,9 +253,18 @@ namespace TextEditor
                 _application.Quit();
             else
                 e.Cancel = true;
+
+            if (_findWindow != null)
+                _findWindow.Close();
         }
 
-        private void TB_TextChanged(object sender, TextChangedEventArgs e) => _isSaved = false;
+        private void TB_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            _isSaved = false;
+            if (ActiveDocument == null)
+                CreateNewDocument();
+        }
+
         private void CreateNewDocument_Click(object sender, RoutedEventArgs e) => CreateNewDocument();
         private void NewWindow_Click(object sender, RoutedEventArgs e) => new MainWindow().Show();
         private void OpenDocument_Click(object sender, RoutedEventArgs e) => OpenDocument();

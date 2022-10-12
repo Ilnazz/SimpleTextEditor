@@ -54,8 +54,8 @@
         </Menu>
 
         <TextBox x:Name="TB" Padding="5" BorderThickness="0" HorizontalScrollBarVisibility="Visible" 
-                 VerticalScrollBarVisibility="Visible" KeyDown="TB_KeyDown" Grid.Row="1" Grid.ColumnSpan="4" 
-                 TextChanged="TB_TextChanged" SelectionChanged="TB_SelectionChanged"/>
+                 VerticalScrollBarVisibility="Visible" Grid.Row="1" Grid.ColumnSpan="4" 
+                 TextChanged="TB_TextChanged" SelectionChanged="TB_SelectionChanged" AcceptsReturn="True"/>
 
         <Grid Grid.Row="2" x:Name="StatusLine" Margin="5">
             <Grid.ColumnDefinitions>
